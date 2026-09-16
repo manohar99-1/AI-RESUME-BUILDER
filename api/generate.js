@@ -14,10 +14,14 @@ const SCHEMA_HINT = `{
 }`;
 
 // Free-tier-friendly models tried in order; first success wins.
+// openrouter/free is a router that auto-selects from whatever free models
+// are currently available, so it stays correct even as OpenRouter's free
+// lineup changes. The two concrete slugs below are a backup in case that
+// router itself has an off moment.
 const MODEL_FALLBACK = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemini-2.0-flash-exp:free',
-  'qwen/qwen-2.5-72b-instruct:free',
+  'openrouter/free',
+  'qwen/qwen3-coder:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
 ];
 
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
