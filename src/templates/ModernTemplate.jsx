@@ -13,7 +13,7 @@ export default function ModernTemplate({ data }) {
   return (
     <div id="resume-sheet" className="bg-white w-[210mm] min-h-[297mm] mx-auto shadow-lg flex text-ink font-body">
       {/* Sidebar */}
-      <aside className="w-[70mm] bg-moss text-paper px-6 py-8 flex flex-col gap-6">
+      <aside className="w-[70mm] bg-moss text-paper flex flex-col gap-6" style={{ padding: '14mm 8mm' }}>
         <div>
           <h1 className="font-display text-2xl leading-tight">{p.name || 'Your Name'}</h1>
           {p.title && <p className="text-sm text-paper/80 mt-1">{p.title}</p>}
@@ -67,7 +67,7 @@ export default function ModernTemplate({ data }) {
       </aside>
 
       {/* Main column */}
-      <main className="flex-1 px-8 py-8 space-y-5">
+      <main className="flex-1 space-y-5" style={{ padding: '14mm 10mm' }}>
         {data.summary && (
           <section>
             <h2 className="text-clay text-[13px] tracking-wide font-semibold uppercase mb-1">Summary</h2>
@@ -80,7 +80,7 @@ export default function ModernTemplate({ data }) {
             <h2 className="text-clay text-[13px] tracking-wide font-semibold uppercase mb-2">Experience</h2>
             <div className="space-y-4">
               {data.experience.map((job, i) => (
-                <div key={i}>
+                <div key={i} className="avoid-break">
                   <div className="flex justify-between items-baseline">
                     <p className="font-semibold text-[14px]">
                       {job.role} <span className="font-normal text-ink/70">— {job.company}</span>
@@ -102,7 +102,7 @@ export default function ModernTemplate({ data }) {
             <h2 className="text-clay text-[13px] tracking-wide font-semibold uppercase mb-2">Projects</h2>
             <div className="space-y-4">
               {data.projects.map((proj, i) => (
-                <div key={i}>
+                <div key={i} className="avoid-break">
                   <p className="font-semibold text-[14px]">
                     {proj.name} {proj.tech && <span className="font-normal text-ink/60 text-[12px]">— {proj.tech}</span>}
                   </p>
