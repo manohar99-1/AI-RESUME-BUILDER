@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 html, body {
-  background: #FAF9F6;
+  background: #15140F;
 }
 
 body {
   font-family: 'Work Sans', sans-serif;
-  color: #1A1917;
+  color: #F3EFE4;
 }
 
 .font-display {
