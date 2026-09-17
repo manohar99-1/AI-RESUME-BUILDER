@@ -16,7 +16,7 @@ function Bullets({ items }) {
 function Heading({ children }) {
   return (
     <h2
-      className="text-[13px] font-bold tracking-[0.06em] uppercase border-b border-ink pb-1 mb-2 mt-6 first:mt-0"
+      className="text-[13px] font-bold tracking-[0.06em] uppercase border-b border-docink pb-1 mb-2 mt-6 first:mt-0"
       style={WORD_SANS}
     >
       {children}
@@ -27,7 +27,7 @@ function Heading({ children }) {
 function DateRange({ start, end }) {
   const text = [start, end].filter(Boolean).join(' – ')
   if (!text) return null
-  return <span className="text-[13px] text-ink/70 whitespace-nowrap" style={WORD_SANS}>{text}</span>
+  return <span className="text-[13px] text-docink/70 whitespace-nowrap" style={WORD_SANS}>{text}</span>
 }
 
 export default function ClassicTemplate({ data }) {
@@ -37,7 +37,7 @@ export default function ClassicTemplate({ data }) {
   return (
     <div
       id="resume-sheet"
-      className="bg-white w-[210mm] min-h-[297mm] mx-auto shadow-lg text-ink"
+      className="bg-white w-[210mm] min-h-[297mm] mx-auto shadow-lg text-docink"
       style={{ padding: '18mm 22mm' }}
     >
       <div className="text-center mb-5">
@@ -50,7 +50,7 @@ export default function ClassicTemplate({ data }) {
           </p>
         )}
         {contactLine && (
-          <p className="text-[13px] text-ink/70 mt-2" style={WORD_SANS}>
+          <p className="text-[13px] text-docink/70 mt-2" style={WORD_SANS}>
             {contactLine}
           </p>
         )}
@@ -79,7 +79,7 @@ export default function ClassicTemplate({ data }) {
                   <DateRange start={job.start} end={job.end} />
                 </div>
                 {job.location && (
-                  <p className="text-[13px] italic text-ink/70" style={WORD_SANS}>
+                  <p className="text-[13px] italic text-docink/70" style={WORD_SANS}>
                     {job.location}
                   </p>
                 )}
@@ -98,7 +98,7 @@ export default function ClassicTemplate({ data }) {
               <div key={i} className="avoid-break">
                 <p className="text-[15px] font-bold" style={WORD_SANS}>
                   {proj.name}
-                  {proj.tech && <span className="font-normal text-ink/70"> · {proj.tech}</span>}
+                  {proj.tech && <span className="font-normal text-docink/70"> · {proj.tech}</span>}
                 </p>
                 {proj.description && (
                   <p className="text-[14.5px] mb-1" style={WORD_SANS}>
@@ -126,7 +126,7 @@ export default function ClassicTemplate({ data }) {
                   <DateRange start={e.start} end={e.end} />
                 </div>
                 {e.details && (
-                  <p className="text-[13px] text-ink/70" style={WORD_SANS}>
+                  <p className="text-[13px] text-docink/70" style={WORD_SANS}>
                     {e.details}
                   </p>
                 )}
