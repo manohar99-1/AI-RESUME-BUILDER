@@ -189,7 +189,7 @@ export default function App() {
           <label className="block mb-5">
             <span className="font-mono text-[10.5px] tracking-[0.1em] uppercase text-ink/50">Paste text</span>
             <textarea
-              className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss"
+              className="mt-1.5 w-full rounded-md border border-line bg-surface px-3 py-2.5 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss"
               rows={6}
               placeholder="Paste your experience, education, skills, project notes — anything."
               value={pastedText}
@@ -209,13 +209,13 @@ export default function App() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="mt-1.5 w-full rounded-md border border-dashed border-line bg-white py-3 text-[13px] text-ink/60 hover:border-moss hover:text-moss transition-colors"
+              className="mt-1.5 w-full rounded-md border border-dashed border-line bg-surface py-3 text-[13px] text-ink/60 hover:border-moss hover:text-moss transition-colors"
             >
               + Add PDF, DOCX, TXT, or an image
             </button>
             <div className="mt-2 space-y-1.5">
               {files.map((f) => (
-                <div key={f.name} className="flex items-center justify-between text-[12px] bg-white rounded-md border border-line px-3 py-2">
+                <div key={f.name} className="flex items-center justify-between text-[12px] bg-surface rounded-md border border-line px-3 py-2">
                   <span className="truncate">{f.name}</span>
                   <span className="flex items-center gap-2 shrink-0">
                     <span
@@ -255,7 +255,7 @@ export default function App() {
               <span className="font-mono text-[10.5px] tracking-[0.1em] uppercase text-ink/50">Saved versions</span>
               <div className="mt-1.5 space-y-1.5">
                 {versions.map((v) => (
-                  <div key={v.id} className="flex items-center justify-between text-[12px] bg-white rounded-md border border-line px-3 py-2">
+                  <div key={v.id} className="flex items-center justify-between text-[12px] bg-surface rounded-md border border-line px-3 py-2">
                     <button className="truncate text-left flex-1" onClick={() => { handleLoadVersion(v); setStep('editing'); setMobileTab('preview') }}>
                       {v.name}
                     </button>
@@ -333,7 +333,7 @@ export default function App() {
             <label className="block">
               <span className="text-[12px] font-medium text-ink/70">Summary</span>
               <textarea
-                className="mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/40"
+                className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/40"
                 rows={3}
                 value={resumeData.summary || ''}
                 onChange={(e) => updateTop('summary', e.target.value)}
@@ -353,7 +353,7 @@ export default function App() {
             </div>
             <div className="space-y-4">
               {resumeData.experience.map((job, i) => (
-                <div key={i} className="border border-line rounded-md p-3 bg-white space-y-2">
+                <div key={i} className="border border-line rounded-md p-3 bg-surface space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     <Field label="Role" value={job.role} onChange={(v) => updateListItem('experience', i, 'role', v)} />
                     <Field label="Company" value={job.company} onChange={(v) => updateListItem('experience', i, 'company', v)} />
@@ -384,7 +384,7 @@ export default function App() {
             </div>
             <div className="space-y-4">
               {resumeData.projects.map((proj, i) => (
-                <div key={i} className="border border-line rounded-md p-3 bg-white space-y-2">
+                <div key={i} className="border border-line rounded-md p-3 bg-surface space-y-2">
                   <Field label="Name" value={proj.name} onChange={(v) => updateListItem('projects', i, 'name', v)} />
                   <Field label="Tech" value={proj.tech} onChange={(v) => updateListItem('projects', i, 'tech', v)} />
                   <Field label="Description" value={proj.description} onChange={(v) => updateListItem('projects', i, 'description', v)} />
@@ -409,7 +409,7 @@ export default function App() {
             </div>
             <div className="space-y-4">
               {resumeData.education.map((edu, i) => (
-                <div key={i} className="border border-line rounded-md p-3 bg-white space-y-2">
+                <div key={i} className="border border-line rounded-md p-3 bg-surface space-y-2">
                   <Field label="Degree" value={edu.degree} onChange={(v) => updateListItem('education', i, 'degree', v)} />
                   <Field label="School" value={edu.school} onChange={(v) => updateListItem('education', i, 'school', v)} />
                   <div className="flex gap-2">
@@ -441,7 +441,7 @@ export default function App() {
             </div>
             <div className="space-y-3">
               {resumeData.certifications.map((c, i) => (
-                <div key={i} className="border border-line rounded-md p-3 bg-white space-y-2">
+                <div key={i} className="border border-line rounded-md p-3 bg-surface space-y-2">
                   <Field label="Name" value={c.name} onChange={(v) => updateListItem('certifications', i, 'name', v)} />
                   <Field label="Issuer" value={c.issuer} onChange={(v) => updateListItem('certifications', i, 'issuer', v)} />
                   <Field label="Date" value={c.date} onChange={(v) => updateListItem('certifications', i, 'date', v)} />
@@ -467,7 +467,7 @@ export default function App() {
               {busy ? 'Working…' : 'Polish wording with AI'}
             </button>
             <textarea
-              className="w-full rounded-md border border-line bg-white px-3 py-2 text-[13px]"
+              className="w-full rounded-md border border-line bg-surface px-3 py-2 text-[13px]"
               rows={3}
               placeholder="Paste a job description to tailor this resume to it (optional)"
               value={jobDescription}
@@ -486,7 +486,7 @@ export default function App() {
             <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Save this version</h2>
             <div className="flex gap-2">
               <input
-                className="flex-1 rounded-md border border-line bg-white px-3 py-2 text-[13px]"
+                className="flex-1 rounded-md border border-line bg-surface px-3 py-2 text-[13px]"
                 placeholder="Version name (e.g. Backend roles)"
                 value={versionName}
                 onChange={(e) => setVersionName(e.target.value)}
@@ -512,7 +512,7 @@ export default function App() {
               />
             </label>
           </div>
-          <div className="preview-scroll border border-line rounded-md bg-ink/5">
+          <div className="preview-scroll border border-line rounded-md bg-surface p-4">
             <div className="preview-scale" style={{ '--zoom': zoom }}>
               <PreviewComponent data={resumeData} />
             </div>
