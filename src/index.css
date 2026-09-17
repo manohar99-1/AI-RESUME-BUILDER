@@ -7,12 +7,28 @@ html, body {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  color: #1C1B19;
+  font-family: 'Work Sans', sans-serif;
+  color: #1A1917;
 }
 
 .font-display {
-  font-family: 'Fraunces', serif;
+  font-family: 'Petrona', serif;
+}
+
+/* On-screen only: lets the mobile preview shrink to fit a narrow phone
+   screen. Reset to 1 for print so exported PDFs are never mis-scaled. */
+.preview-scale {
+  zoom: var(--zoom, 1);
+}
+
+.preview-scroll {
+  overflow: auto;
+  max-height: 70vh;
+}
+
+/* Keep resume entries from splitting awkwardly across a page break */
+.avoid-break {
+  break-inside: avoid;
 }
 
 /* Print styles: only the resume sheet is visible when exporting to PDF */
@@ -22,6 +38,13 @@ body {
   }
   #resume-sheet, #resume-sheet * {
     visibility: visible;
+  }
+  .preview-scale {
+    zoom: 1 !important;
+  }
+  .preview-scroll {
+    overflow: visible !important;
+    max-height: none !important;
   }
   #resume-sheet {
     position: absolute;
