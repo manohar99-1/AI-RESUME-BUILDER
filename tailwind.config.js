@@ -4,15 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#1C1B19',
-        paper: '#FAF9F6',
-        moss: '#2F4B3C',
-        clay: '#B4562A',
-        line: '#DEDAD1'
+        ink: '#1A1917',
+        paper: '#F6F4EE',
+        moss: '#1F4B3F',
+        clay: '#B4691E',
+        line: '#E1DCCF'
       },
       fontFamily: {
-        display: ['"Fraunces"', 'serif'],
-        body: ['"Inter"', 'sans-serif']
+        display: ['"Petrona"', 'serif'],
+        body: ['"Work Sans"', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'monospace'],
+        docserif: ['"Source Serif 4"', 'Georgia', 'serif']
       }
     },
   },
