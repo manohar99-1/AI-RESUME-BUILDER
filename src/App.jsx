@@ -157,18 +157,39 @@ export default function App() {
 
   if (step === 'input') {
     return (
-      <div className="min-h-screen bg-paper px-5 py-8">
+      <div className="min-h-screen bg-paper px-5 py-10">
         <div className="max-w-md mx-auto">
-          <h1 className="font-display text-3xl text-ink">Resumeforge</h1>
-          <p className="text-ink/70 text-[14px] mt-1 mb-6">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-clay" />
+            <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">Resume builder</span>
+          </div>
+          <h1 className="font-display text-4xl text-ink mb-2">Resumeforge</h1>
+          <p className="text-ink/70 text-[14px] leading-relaxed mb-5">
             Paste your details, or upload documents — an old resume, certificates, project notes,
             even a photo of a printed certificate. We'll pull it together into a clean resume.
           </p>
 
-          <label className="block mb-4">
-            <span className="text-[12px] font-medium text-ink/70">Paste text</span>
+          <div className="flex items-center gap-2 mb-8 font-mono text-[10.5px] text-ink/50">
+            <span className="flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-moss text-paper flex items-center justify-center text-[9px]">1</span>
+              Add info
+            </span>
+            <span className="flex-1 h-px bg-line" />
+            <span className="flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full border border-line flex items-center justify-center text-[9px]">2</span>
+              Edit
+            </span>
+            <span className="flex-1 h-px bg-line" />
+            <span className="flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full border border-line flex items-center justify-center text-[9px]">3</span>
+              Export
+            </span>
+          </div>
+
+          <label className="block mb-5">
+            <span className="font-mono text-[10.5px] tracking-[0.1em] uppercase text-ink/50">Paste text</span>
             <textarea
-              className="mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/40"
+              className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-[13px] leading-snug focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss"
               rows={6}
               placeholder="Paste your experience, education, skills, project notes — anything."
               value={pastedText}
@@ -176,8 +197,8 @@ export default function App() {
             />
           </label>
 
-          <div className="mb-4">
-            <span className="text-[12px] font-medium text-ink/70">Upload files</span>
+          <div className="mb-5">
+            <span className="font-mono text-[10.5px] tracking-[0.1em] uppercase text-ink/50">Upload files</span>
             <input
               ref={fileInputRef}
               type="file"
@@ -188,11 +209,11 @@ export default function App() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="mt-1 w-full rounded-md border border-dashed border-line bg-white py-3 text-[13px] text-ink/70"
+              className="mt-1.5 w-full rounded-md border border-dashed border-line bg-white py-3 text-[13px] text-ink/60 hover:border-moss hover:text-moss transition-colors"
             >
               + Add PDF, DOCX, TXT, or an image
             </button>
-            <div className="mt-2 space-y-1">
+            <div className="mt-2 space-y-1.5">
               {files.map((f) => (
                 <div key={f.name} className="flex items-center justify-between text-[12px] bg-white rounded-md border border-line px-3 py-2">
                   <span className="truncate">{f.name}</span>
@@ -217,20 +238,22 @@ export default function App() {
             </div>
           </div>
 
-          {error && <p className="text-clay text-[13px] mb-3">{error}</p>}
+          {error && (
+            <p className="text-clay text-[13px] mb-3 bg-clay/10 border border-clay/30 rounded-md px-3 py-2">{error}</p>
+          )}
 
           <button
             onClick={handleGenerate}
             disabled={busy}
-            className="w-full rounded-md bg-moss text-paper py-3 text-[14px] font-medium disabled:opacity-50"
+            className="w-full rounded-md bg-moss text-paper py-3 text-[14px] font-medium disabled:opacity-50 hover:bg-moss/90 transition-colors"
           >
             {busy ? 'Reading your info…' : 'Generate resume'}
           </button>
 
           {versions.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-[12px] font-medium text-ink/70 mb-2">Saved versions</h2>
-              <div className="space-y-1">
+            <div className="mt-9">
+              <span className="font-mono text-[10.5px] tracking-[0.1em] uppercase text-ink/50">Saved versions</span>
+              <div className="mt-1.5 space-y-1.5">
                 {versions.map((v) => (
                   <div key={v.id} className="flex items-center justify-between text-[12px] bg-white rounded-md border border-line px-3 py-2">
                     <button className="truncate text-left flex-1" onClick={() => { handleLoadVersion(v); setStep('editing'); setMobileTab('preview') }}>
@@ -251,20 +274,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="sticky top-0 z-10 bg-paper border-b border-line px-4 py-3 flex items-center justify-between">
-        <button onClick={() => setStep('input')} className="text-[13px] text-ink/60">
-          ← Start over
+      <header className="sticky top-0 z-10 bg-paper/95 backdrop-blur border-b border-line px-4 py-3 flex items-center justify-between">
+        <button onClick={() => setStep('input')} className="flex items-center gap-1.5 text-[13px] text-ink/60 hover:text-ink transition-colors">
+          <span aria-hidden>←</span> <span className="font-display text-[15px] text-ink">Resumeforge</span>
         </button>
-        <div className="flex rounded-full border border-line overflow-hidden text-[12px]">
+        <div className="flex rounded-full border border-line overflow-hidden font-mono text-[10.5px] tracking-wide uppercase">
           <button
             onClick={() => setMobileTab('edit')}
-            className={`px-3 py-1 ${mobileTab === 'edit' ? 'bg-moss text-paper' : 'text-ink/70'}`}
+            className={`px-3 py-1.5 transition-colors ${mobileTab === 'edit' ? 'bg-moss text-paper' : 'text-ink/60'}`}
           >
             Edit
           </button>
           <button
             onClick={() => setMobileTab('preview')}
-            className={`px-3 py-1 ${mobileTab === 'preview' ? 'bg-moss text-paper' : 'text-ink/70'}`}
+            className={`px-3 py-1.5 transition-colors ${mobileTab === 'preview' ? 'bg-moss text-paper' : 'text-ink/60'}`}
           >
             Preview
           </button>
@@ -276,7 +299,7 @@ export default function App() {
       {mobileTab === 'edit' ? (
         <div className="px-4 py-4 space-y-6 max-w-md mx-auto">
           <section>
-            <h2 className="text-[13px] font-semibold text-ink mb-2">Template</h2>
+            <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70 mb-2">Template</h2>
             <div className="flex gap-2">
               {Object.entries(TEMPLATES).map(([key, t]) => (
                 <button
@@ -320,7 +343,7 @@ export default function App() {
 
           <section>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-ink">Experience</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Experience</h2>
               <button
                 className="text-[12px] text-moss"
                 onClick={() => addListItem('experience', { company: '', role: '', location: '', start: '', end: '', bullets: [] })}
@@ -351,7 +374,7 @@ export default function App() {
 
           <section>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-ink">Projects</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Projects</h2>
               <button
                 className="text-[12px] text-moss"
                 onClick={() => addListItem('projects', { name: '', description: '', tech: '', link: '', bullets: [] })}
@@ -376,7 +399,7 @@ export default function App() {
 
           <section>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-ink">Education</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Education</h2>
               <button
                 className="text-[12px] text-moss"
                 onClick={() => addListItem('education', { school: '', degree: '', location: '', start: '', end: '', details: '' })}
@@ -408,7 +431,7 @@ export default function App() {
 
           <section>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[13px] font-semibold text-ink">Certifications</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Certifications</h2>
               <button
                 className="text-[12px] text-moss"
                 onClick={() => addListItem('certifications', { name: '', issuer: '', date: '' })}
@@ -435,7 +458,7 @@ export default function App() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-[13px] font-semibold text-ink">AI tools</h2>
+            <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">AI tools</h2>
             <button
               onClick={handleEnhance}
               disabled={busy}
@@ -460,7 +483,7 @@ export default function App() {
           </section>
 
           <section className="space-y-2 pb-10">
-            <h2 className="text-[13px] font-semibold text-ink">Save this version</h2>
+            <h2 className="font-mono text-[11px] tracking-[0.08em] uppercase text-ink/70">Save this version</h2>
             <div className="flex gap-2">
               <input
                 className="flex-1 rounded-md border border-line bg-white px-3 py-2 text-[13px]"
@@ -489,8 +512,8 @@ export default function App() {
               />
             </label>
           </div>
-          <div className="overflow-auto border border-line rounded-md bg-ink/5" style={{ maxHeight: '70vh' }}>
-            <div style={{ zoom }}>
+          <div className="preview-scroll border border-line rounded-md bg-ink/5">
+            <div className="preview-scale" style={{ '--zoom': zoom }}>
               <PreviewComponent data={resumeData} />
             </div>
           </div>
