@@ -54,8 +54,20 @@ body {
     box-shadow: none !important;
     margin: 0 !important;
   }
+  /* A box's own top/bottom padding only ever applies once — at the very
+     start and very end of the whole element — not at the top of every
+     printed page. So we zero it here and let @page's margin (which DOES
+     repeat on every page) provide the vertical spacing instead. Left/right
+     padding is untouched: it isn't affected by this and still comes from
+     each template's own inline styles. */
+  #resume-sheet,
+  #resume-sheet > aside,
+  #resume-sheet > main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
   @page {
     size: A4;
-    margin: 0;
+    margin: 18mm 0;
   }
 }
