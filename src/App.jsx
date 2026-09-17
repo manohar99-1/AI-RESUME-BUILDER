@@ -169,20 +169,20 @@ export default function App() {
             even a photo of a printed certificate. We'll pull it together into a clean resume.
           </p>
 
-          <div className="flex items-center gap-2 mb-8 font-mono text-[10.5px] text-ink/50">
-            <span className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-moss text-paper flex items-center justify-center text-[9px]">1</span>
-              Add info
+          <div className="flex items-center gap-2 mb-8 font-mono text-[11px] text-ink/60">
+            <span className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-moss text-paper flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
+              <span>Add info</span>
             </span>
             <span className="flex-1 h-px bg-line" />
-            <span className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full border border-line flex items-center justify-center text-[9px]">2</span>
-              Edit
+            <span className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full border border-line flex items-center justify-center text-[10px] shrink-0">2</span>
+              <span>Edit</span>
             </span>
             <span className="flex-1 h-px bg-line" />
-            <span className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full border border-line flex items-center justify-center text-[9px]">3</span>
-              Export
+            <span className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full border border-line flex items-center justify-center text-[10px] shrink-0">3</span>
+              <span>Export</span>
             </span>
           </div>
 
