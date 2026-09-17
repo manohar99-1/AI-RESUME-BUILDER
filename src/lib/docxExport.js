@@ -18,7 +18,7 @@ function sectionHeading(title) {
     heading: HeadingLevel.HEADING_2,
     spacing: { before: 240, after: 80 },
     border: HAIRLINE,
-    children: [new TextRun({ text: title.toUpperCase(), bold: true, size: 22, color: '1C1B19' })],
+    children: [new TextRun({ text: title.toUpperCase(), bold: true, size: 24, color: '1C1B19' })],
   })
 }
 
@@ -49,7 +49,7 @@ export async function exportResumeToDocx(resumeData, fileName = 'resume.docx') {
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 40 },
-      children: [new TextRun({ text: p.name || 'Your Name', bold: true, size: 40 })],
+      children: [new TextRun({ text: p.name || 'Your Name', bold: true, size: 52 })],
     })
   )
   if (p.title) {
@@ -67,7 +67,7 @@ export async function exportResumeToDocx(resumeData, fileName = 'resume.docx') {
       new Paragraph({
         alignment: AlignmentType.CENTER,
         spacing: { after: 120 },
-        children: [new TextRun({ text: contactLine, size: 18, color: '4B4A46' })],
+        children: [new TextRun({ text: contactLine, size: 20, color: '4B4A46' })],
       })
     )
   }
@@ -91,7 +91,7 @@ export async function exportResumeToDocx(resumeData, fileName = 'resume.docx') {
       )
       const meta = [job.location, dateRange(job.start, job.end)].filter(Boolean).join('   ')
       if (meta) {
-        children.push(new Paragraph({ children: [new TextRun({ text: meta, italics: true, size: 18, color: '4B4A46' })] }))
+        children.push(new Paragraph({ children: [new TextRun({ text: meta, italics: true, size: 20, color: '4B4A46' })] }))
       }
       children.push(...bulletList(job.bullets))
     })
@@ -127,7 +127,7 @@ export async function exportResumeToDocx(resumeData, fileName = 'resume.docx') {
         })
       )
       const meta = [edu.location, dateRange(edu.start, edu.end)].filter(Boolean).join('   ')
-      if (meta) children.push(new Paragraph({ children: [new TextRun({ text: meta, italics: true, size: 18, color: '4B4A46' })] }))
+      if (meta) children.push(new Paragraph({ children: [new TextRun({ text: meta, italics: true, size: 20, color: '4B4A46' })] }))
       if (edu.details) children.push(new Paragraph({ text: edu.details }))
     })
   }
@@ -151,6 +151,11 @@ export async function exportResumeToDocx(resumeData, fileName = 'resume.docx') {
   }
 
   const doc = new Document({
+    styles: {
+      default: {
+        document: { run: { size: 22 } }, // 11pt body text
+      },
+    },
     sections: [
       {
         properties: {},
