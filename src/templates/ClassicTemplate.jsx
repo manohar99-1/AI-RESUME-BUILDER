@@ -38,7 +38,7 @@ export default function ClassicTemplate({ data }) {
     <div
       id="resume-sheet"
       className="bg-white w-[210mm] min-h-[297mm] mx-auto shadow-lg text-ink"
-      style={{ padding: '20mm 22mm' }}
+      style={{ padding: '18mm 22mm' }}
     >
       <div className="text-center mb-5">
         <h1 className="text-[30px] font-bold tracking-tight" style={WORD_SERIF}>
