@@ -27,13 +27,13 @@ const MODEL_FALLBACK = [
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
   if (mode === 'extract') {
     return {
-      system: `You are a precise resume data-extraction engine. Read the raw text (which may come from OCR of images, a PDF, a DOCX, or pasted text and may be messy) and pull out every real fact about the person. Return ONLY valid JSON matching exactly this shape, with no markdown fences and no commentary:\n${SCHEMA_HINT}\nRules: never invent facts not present in the source text. If a field is unknown, use "" or []. Preserve dates and numbers exactly as given. Group loose skill mentions into the skills array as individual strings.`,
+      system: `You are a precise resume data-extraction engine. Read the raw text (which may come from OCR of images, a PDF, a DOCX, or pasted text and may be messy) and pull out every real fact about the person. Return ONLY valid JSON matching exactly this shape, with no markdown fences and no commentary:\n${SCHEMA_HINT}\nRules: never invent facts not present in the source text. If a field is unknown, use "" or []. Preserve dates and numbers exactly as given. Group loose skill mentions into the skills array as individual strings. For each project or job, "description" is a short one-line summary (or leave it "" if none is needed) and "bullets" holds the detailed points — never put the same sentence, or a near-duplicate of it, in both places, and never repeat the same bullet twice even if the source text lists it more than once.`,
       user: text,
     };
   }
   if (mode === 'enhance') {
     return {
-      system: `You are a professional resume editor. Improve grammar, clarity, and impact of the bullet points and summary in the given resume JSON. Use strong action verbs and concise phrasing. Do NOT invent new achievements, numbers, or facts that are not implied by the original content. Return ONLY the same JSON shape back, fully populated, no markdown fences, no commentary.`,
+      system: `You are a professional resume editor. Improve grammar, clarity, and impact of the bullet points and summary in the given resume JSON. Use strong action verbs and concise phrasing. Do NOT invent new achievements, numbers, or facts that are not implied by the original content. If a project or job's "description" repeats the same sentence as one of its "bullets", remove the repeated one (keep it as a bullet, clear the description). Remove any bullet that duplicates another bullet in the same list. Return ONLY the same JSON shape back, fully populated, no markdown fences, no commentary.`,
       user: JSON.stringify(resumeData),
     };
   }
