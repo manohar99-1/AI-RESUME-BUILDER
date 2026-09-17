@@ -36,6 +36,15 @@ body {
 
 /* Print styles: only the resume sheet is visible when exporting to PDF */
 @media print {
+  /* Chrome (and most browsers) strip background colors/images from
+     printed output by default — without this, the resume's colored
+     sidebar and section rules would silently disappear from the PDF
+     even though everything else looks identical to the live preview. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
   body {
     background-image: none !important;
   }
@@ -60,12 +69,6 @@ body {
     box-shadow: none !important;
     margin: 0 !important;
   }
-  /* A box's own top/bottom padding only ever applies once — at the very
-     start and very end of the whole element — not at the top of every
-     printed page. So we zero it here and let @page's margin (which DOES
-     repeat on every page) provide the vertical spacing instead. Left/right
-     padding is untouched: it isn't affected by this and still comes from
-     each template's own inline styles. */
   #resume-sheet,
   #resume-sheet > aside,
   #resume-sheet > main {
