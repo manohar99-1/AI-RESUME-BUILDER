@@ -3,16 +3,19 @@
 @tailwind utilities;
 
 html, body {
-  background: #15140F;
+  background: #10141A;
 }
 
 body {
   font-family: 'Work Sans', sans-serif;
-  color: #F3EFE4;
+  color: #ECEEF1;
+  background-image: radial-gradient(rgba(34, 184, 166, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+  background-attachment: fixed;
 }
 
 .font-display {
-  font-family: 'Petrona', serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 /* On-screen only: lets the mobile preview shrink to fit a narrow phone
@@ -33,6 +36,9 @@ body {
 
 /* Print styles: only the resume sheet is visible when exporting to PDF */
 @media print {
+  body {
+    background-image: none !important;
+  }
   body * {
     visibility: hidden;
   }
