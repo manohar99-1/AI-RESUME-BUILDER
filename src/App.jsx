@@ -159,31 +159,20 @@ export default function App() {
     return (
       <div className="min-h-screen bg-paper px-5 py-10">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-clay" />
-            <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">Resume builder</span>
+          <div className="inline-flex items-center gap-2 border border-moss/40 px-3 py-1 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-moss" />
+            <span className="font-mono text-[10.5px] tracking-[0.15em] uppercase text-moss">Resume builder</span>
           </div>
-          <h1 className="font-display text-4xl text-ink mb-2">Resumeforge</h1>
-          <p className="text-ink/70 text-[14px] leading-relaxed mb-5">
+          <h1 className="font-display font-bold text-5xl text-ink mb-3 tracking-tight">Resumeforge</h1>
+          <p className="text-ink/70 text-[14px] leading-relaxed mb-6">
             Paste your details, or upload documents — an old resume, certificates, project notes,
             even a photo of a printed certificate. We'll pull it together into a clean resume.
           </p>
 
-          <div className="flex items-center gap-2 mb-8 font-mono text-[11px] text-ink/60">
-            <span className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-moss text-paper flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
-              <span>Add info</span>
-            </span>
-            <span className="flex-1 h-px bg-line" />
-            <span className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border border-line flex items-center justify-center text-[10px] shrink-0">2</span>
-              <span>Edit</span>
-            </span>
-            <span className="flex-1 h-px bg-line" />
-            <span className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border border-line flex items-center justify-center text-[10px] shrink-0">3</span>
-              <span>Export</span>
-            </span>
+          <div className="grid grid-cols-3 gap-2 mb-8 font-mono text-[10px] tracking-wide uppercase">
+            <div className="border border-moss/40 text-moss px-2 py-2 text-center">01 · Add info</div>
+            <div className="border border-line text-ink/50 px-2 py-2 text-center">02 · Edit</div>
+            <div className="border border-line text-ink/50 px-2 py-2 text-center">03 · Export</div>
           </div>
 
           <label className="block mb-5">
@@ -245,7 +234,8 @@ export default function App() {
           <button
             onClick={handleGenerate}
             disabled={busy}
-            className="w-full rounded-md bg-moss text-paper py-3 text-[14px] font-medium disabled:opacity-50 hover:bg-moss/90 transition-colors"
+            className="w-full bg-moss text-paper py-3.5 text-[14px] font-bold uppercase tracking-wide font-mono disabled:opacity-50 hover:bg-moss/90 transition-colors"
+            style={{ boxShadow: busy ? 'none' : '0 0 24px rgba(34,184,166,0.35)' }}
           >
             {busy ? 'Reading your info…' : 'Generate resume'}
           </button>
