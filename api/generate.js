@@ -77,8 +77,15 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Each attempt gets its own timeout so one slow/overloaded free model
+  // can't stall the whole request past Vercel's function time limit — it
+  // fails fast and the loop moves on to the next model instead.
+  const PER_MODEL_TIMEOUT_MS = 12000;
+
   let lastError = null;
   for (const model of MODEL_FALLBACK) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PER_MODEL_TIMEOUT_MS);
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -94,6 +101,7 @@ export default async function handler(req, res) {
           ],
           temperature: 0.4,
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -112,9 +120,18 @@ export default async function handler(req, res) {
       res.status(200).json({ result: parsed, modelUsed: model });
       return;
     } catch (e) {
-      lastError = `${model}: ${e.message}`;
+      lastError = e.name === 'AbortError' ? `${model}: timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s` : `${model}: ${e.message}`;
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
   res.status(502).json({ error: `All models failed. Last error: ${lastError}` });
 }
+
+// Give the function enough headroom to try all fallback models
+// (3 attempts x 12s) plus response-parsing overhead, without hanging
+// indefinitely if Vercel's default limit would otherwise cut it short.
+export const config = {
+  maxDuration: 45,
+};
