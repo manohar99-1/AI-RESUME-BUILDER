@@ -1,3 +1,4 @@
+
 // Vercel serverless function: POST /api/generate
 // Body: { mode: 'extract' | 'enhance' | 'tailor', text?, resumeData?, jobDescription? }
 // Keeps OPENROUTER_API_KEY server-side. Set it in Vercel project env vars.
@@ -21,7 +22,7 @@ const SCHEMA_HINT = `{
 const MODEL_FALLBACK = [
   'openrouter/free',
   'qwen/qwen3-coder:free',
-  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nvidia/nemotron-3-nano-30b-a3b:free',
 ];
 
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
@@ -82,7 +83,7 @@ export default async function handler(req, res) {
   // fails fast and the loop moves on to the next model instead.
   const PER_MODEL_TIMEOUT_MS = 12000;
 
-  let lastError = null;
+  let errors = [];
   for (const model of MODEL_FALLBACK) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PER_MODEL_TIMEOUT_MS);
@@ -105,14 +106,15 @@ export default async function handler(req, res) {
       });
 
       if (!response.ok) {
-        lastError = `${model}: HTTP ${response.status}`;
+        const bodyText = await response.text().catch(() => '');
+        errors.push(`${model}: HTTP ${response.status}${bodyText ? ` — ${bodyText.slice(0, 200)}` : ''}`);
         continue;
       }
 
       const data = await response.json();
       const raw = data?.choices?.[0]?.message?.content;
       if (!raw) {
-        lastError = `${model}: empty response`;
+        errors.push(`${model}: empty response`);
         continue;
       }
 
@@ -120,13 +122,13 @@ export default async function handler(req, res) {
       res.status(200).json({ result: parsed, modelUsed: model });
       return;
     } catch (e) {
-      lastError = e.name === 'AbortError' ? `${model}: timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s` : `${model}: ${e.message}`;
+      errors.push(e.name === 'AbortError' ? `${model}: timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s` : `${model}: ${e.message}`);
     } finally {
       clearTimeout(timeout);
     }
   }
 
-  res.status(502).json({ error: `All models failed. Last error: ${lastError}` });
+  res.status(502).json({ error: `All models failed. ${errors.join(' | ')}` });
 }
 
 // Give the function enough headroom to try all fallback models
