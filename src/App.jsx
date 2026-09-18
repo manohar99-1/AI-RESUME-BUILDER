@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { extractTextFromFile } from './lib/parseFile'
 import { EMPTY_RESUME, extractResumeData, enhanceResumeData, tailorResumeData } from './lib/aiClient'
 import { exportResumeToDocx } from './lib/docxExport'
@@ -31,6 +31,22 @@ export default function App() {
   const [versions, setVersions] = useState(listVersions())
   const [versionName, setVersionName] = useState('')
   const fileInputRef = useRef(null)
+  const previewContainerRef = useRef(null)
+
+  // Auto-fit the preview to the actual screen width every time the Preview
+  // tab is opened, so lines never run off-screen requiring sideways
+  // scrolling to read — the old fixed default zoom didn't account for the
+  // real device width. The user can still zoom in further with the slider.
+  useEffect(() => {
+    if (mobileTab !== 'preview') return
+    const el = previewContainerRef.current
+    if (!el) return
+    const horizontalPadding = 32 // matches the container's p-4
+    const sheetWidthPx = 793.7 // 210mm at 96 CSS px/inch
+    const available = el.clientWidth - horizontalPadding
+    const fit = Math.min(1, Math.max(0.3, available / sheetWidthPx))
+    setZoom(Math.round(fit * 100) / 100)
+  }, [mobileTab])
 
   async function handleFilesSelected(e) {
     const picked = Array.from(e.target.files || [])
@@ -502,7 +518,7 @@ export default function App() {
               />
             </label>
           </div>
-          <div className="preview-scroll border border-line rounded-md bg-surface p-4">
+          <div ref={previewContainerRef} className="preview-scroll border border-line rounded-md bg-surface p-4">
             <div className="preview-scale" style={{ '--zoom': zoom }}>
               <PreviewComponent data={resumeData} />
             </div>
