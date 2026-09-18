@@ -1,3 +1,9 @@
+// Inserts zero-width break opportunities at sensible spots (after @, //, .)
+// so long emails/URLs wrap at a natural boundary instead of splitting mid-word.
+function breakable(text) {
+  return (text || '').replace(/([@/.])/g, '$1\u200b')
+}
+
 function Bullets({ items }) {
   return (
     <ul className="list-disc list-outside ml-4 space-y-1 text-[14px] leading-snug text-docink/90">
@@ -19,11 +25,11 @@ export default function ModernTemplate({ data }) {
           {p.title && <p className="text-[13px] text-docpaper/80 mt-1">{p.title}</p>}
         </div>
         <div className="text-[13px] space-y-1 text-docpaper/90 break-words">
-          {p.email && <p>{p.email}</p>}
+          {p.email && <p>{breakable(p.email)}</p>}
           {p.phone && <p>{p.phone}</p>}
           {p.location && <p>{p.location}</p>}
           {(p.links || []).filter(Boolean).map((l, i) => (
-            <p key={i}>{l}</p>
+            <p key={i}>{breakable(l)}</p>
           ))}
         </div>
         {data.skills?.length > 0 && (
