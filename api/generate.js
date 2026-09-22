@@ -21,8 +21,8 @@ const SCHEMA_HINT = `{
 // router itself has an off moment.
 const MODEL_FALLBACK = [
   'openrouter/free',
-  'qwen/qwen3-coder:free',
-  'nvidia/nemotron-3-nano-30b-a3b:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'deepseek/deepseek-v4-flash-0731:free',
 ];
 
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
@@ -49,7 +49,15 @@ function buildPrompt(mode, { text, resumeData, jobDescription }) {
 
 function extractJson(raw) {
   const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-  return JSON.parse(cleaned);
+  // Some models prepend a stray line (e.g. a safety-check note) before the
+  // actual JSON object. Rather than assume the whole string is JSON, pull
+  // out just the substring from the first '{' to the last '}'.
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start === -1 || end === -1 || end < start) {
+    throw new Error('No JSON object found in model response');
+  }
+  return JSON.parse(cleaned.slice(start, end + 1));
 }
 
 export default async function handler(req, res) {
