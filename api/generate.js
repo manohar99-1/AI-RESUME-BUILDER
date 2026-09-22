@@ -1,4 +1,3 @@
-
 // Vercel serverless function: POST /api/generate
 // Body: { mode: 'extract' | 'enhance' | 'tailor', text?, resumeData?, jobDescription? }
 // Keeps OPENROUTER_API_KEY server-side. Set it in Vercel project env vars.
@@ -21,8 +20,8 @@ const SCHEMA_HINT = `{
 // router itself has an off moment.
 const MODEL_FALLBACK = [
   'openrouter/free',
+  'qwen/qwen3-coder:free',
   'nvidia/nemotron-3-ultra-550b-a55b:free',
-  'deepseek/deepseek-v4-flash-0731:free',
 ];
 
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
@@ -49,15 +48,7 @@ function buildPrompt(mode, { text, resumeData, jobDescription }) {
 
 function extractJson(raw) {
   const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-  // Some models prepend a stray line (e.g. a safety-check note) before the
-  // actual JSON object. Rather than assume the whole string is JSON, pull
-  // out just the substring from the first '{' to the last '}'.
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start === -1 || end === -1 || end < start) {
-    throw new Error('No JSON object found in model response');
-  }
-  return JSON.parse(cleaned.slice(start, end + 1));
+  return JSON.parse(cleaned);
 }
 
 export default async function handler(req, res) {
@@ -86,15 +77,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Each attempt gets its own timeout so one slow/overloaded free model
-  // can't stall the whole request past Vercel's function time limit — it
-  // fails fast and the loop moves on to the next model instead.
-  const PER_MODEL_TIMEOUT_MS = 12000;
-
-  let errors = [];
+  let lastError = null;
   for (const model of MODEL_FALLBACK) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), PER_MODEL_TIMEOUT_MS);
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -110,19 +94,17 @@ export default async function handler(req, res) {
           ],
           temperature: 0.4,
         }),
-        signal: controller.signal,
       });
 
       if (!response.ok) {
-        const bodyText = await response.text().catch(() => '');
-        errors.push(`${model}: HTTP ${response.status}${bodyText ? ` — ${bodyText.slice(0, 200)}` : ''}`);
+        lastError = `${model}: HTTP ${response.status}`;
         continue;
       }
 
       const data = await response.json();
       const raw = data?.choices?.[0]?.message?.content;
       if (!raw) {
-        errors.push(`${model}: empty response`);
+        lastError = `${model}: empty response`;
         continue;
       }
 
@@ -130,18 +112,9 @@ export default async function handler(req, res) {
       res.status(200).json({ result: parsed, modelUsed: model });
       return;
     } catch (e) {
-      errors.push(e.name === 'AbortError' ? `${model}: timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s` : `${model}: ${e.message}`);
-    } finally {
-      clearTimeout(timeout);
+      lastError = `${model}: ${e.message}`;
     }
   }
 
-  res.status(502).json({ error: `All models failed. ${errors.join(' | ')}` });
+  res.status(502).json({ error: `All models failed. Last error: ${lastError}` });
 }
-
-// Give the function enough headroom to try all fallback models
-// (3 attempts x 12s) plus response-parsing overhead, without hanging
-// indefinitely if Vercel's default limit would otherwise cut it short.
-export const config = {
-  maxDuration: 45,
-};
