@@ -14,16 +14,64 @@ const SCHEMA_HINT = `{
   "achievements": [""]
 }`;
 
-// Free-tier-friendly models tried in order; first success wins.
-// openrouter/free is a router that auto-selects from whatever free models
-// are currently available, so it stays correct even as OpenRouter's free
-// lineup changes. The two concrete slugs below are a backup in case that
-// router itself has an off moment.
-const MODEL_FALLBACK = [
-  'openrouter/free',
-  'nvidia/nemotron-3-ultra-550b-a55b:free',
-  'deepseek/deepseek-v4-flash-0731:free',
-];
+// Hardcoded model slugs go stale whenever OpenRouter's free lineup rotates
+// (which happens periodically) — instead, we ask OpenRouter which free
+// models are currently live and pick from those. openrouter/free (a
+// self-managing router) is always tried first since it's the most
+// reliable option; the discovered models are backups if that has an off
+// moment. Results are cached in memory for a while so a warm serverless
+// instance doesn't refetch the catalog on every single request.
+const MODELS_ENDPOINT = 'https://openrouter.ai/api/v1/models';
+const MODEL_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+let modelCache = { models: null, fetchedAt: 0 };
+
+// Exclude model families that are free but not fit for our plain-text JSON
+// task (embeddings, moderation/guard models, speech, image-only, etc).
+const UNSUITABLE_PATTERN = /(embed|guard|safety|moderation|asr|tts|speech|vision-only)/i;
+
+async function getDiscoveredFreeModels(apiKey) {
+  const now = Date.now();
+  if (modelCache.models && now - modelCache.fetchedAt < MODEL_CACHE_TTL_MS) {
+    return modelCache.models;
+  }
+  try {
+    const response = await fetch(MODELS_ENDPOINT, {
+      headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {},
+    });
+    if (!response.ok) throw new Error(`models endpoint HTTP ${response.status}`);
+    const data = await response.json();
+    const freeModels = (data.data || [])
+      .filter((m) => {
+        const pricing = m.pricing || {};
+        const isFree = pricing.prompt === '0' && pricing.completion === '0';
+        const isSuitable = !UNSUITABLE_PATTERN.test(m.id || '');
+        const hasContext = (m.context_length || 0) >= 8000;
+        return isFree && isSuitable && hasContext;
+      })
+      .map((m) => m.id);
+    modelCache = { models: freeModels, fetchedAt: now };
+    return freeModels;
+  } catch (e) {
+    // Network hiccup fetching the catalog itself — fall back to a stale
+    // cache if we have one rather than nothing.
+    return modelCache.models || [];
+  }
+}
+
+async function buildModelFallback(apiKey) {
+  const discovered = await getDiscoveredFreeModels(apiKey);
+  if (discovered.length > 0) {
+    // openrouter/free first, then up to 3 currently-live discovered models.
+    return ['openrouter/free', ...discovered.slice(0, 3)];
+  }
+  // Model catalog itself was unreachable — last-resort hardcoded backups
+  // (may occasionally be stale, but better than nothing).
+  return [
+    'openrouter/free',
+    'nvidia/nemotron-3-ultra-550b-a55b:free',
+    'deepseek/deepseek-v4-flash-0731:free',
+  ];
+}
 
 function buildPrompt(mode, { text, resumeData, jobDescription }) {
   if (mode === 'extract') {
@@ -89,10 +137,11 @@ export default async function handler(req, res) {
   // Each attempt gets its own timeout so one slow/overloaded free model
   // can't stall the whole request past Vercel's function time limit — it
   // fails fast and the loop moves on to the next model instead.
-  const PER_MODEL_TIMEOUT_MS = 12000;
+  const PER_MODEL_TIMEOUT_MS = 10000;
+  const modelFallback = await buildModelFallback(apiKey);
 
   let errors = [];
-  for (const model of MODEL_FALLBACK) {
+  for (const model of modelFallback) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PER_MODEL_TIMEOUT_MS);
     try {
@@ -140,8 +189,9 @@ export default async function handler(req, res) {
 }
 
 // Give the function enough headroom to try all fallback models
-// (3 attempts x 12s) plus response-parsing overhead, without hanging
-// indefinitely if Vercel's default limit would otherwise cut it short.
+// (up to 4 attempts x 10s) plus response-parsing overhead and the model
+// catalog lookup, without hanging indefinitely if Vercel's default limit
+// would otherwise cut it short.
 export const config = {
-  maxDuration: 45,
+  maxDuration: 60,
 };
